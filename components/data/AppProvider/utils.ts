@@ -16,7 +16,6 @@ import {
 } from "@commercelayer/sdk"
 
 import { AppStateData } from "components/data/AppProvider"
-import { LINE_ITEMS_SHIPPABLE } from "components/utils/constants"
 
 export type LineItemType =
   | "gift_cards"
@@ -283,32 +282,6 @@ export const fetchOrder = async (cl: CommerceLayerClient, orderId: string) => {
   })
 }
 
-export async function checkIfShipmentRequired(
-  cl: CommerceLayerClient,
-  orderId: string
-): Promise<boolean> {
-  const lineItems = (
-    await cl.orders.retrieve(orderId, {
-      fields: {
-        line_items: ["item_type", "item"],
-      },
-      include: ["line_items", "line_items.item"],
-    })
-  ).line_items?.filter(
-    (line_item) =>
-      LINE_ITEMS_SHIPPABLE.includes(line_item.item_type as TypeAccepted) &&
-      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-      // @ts-ignore
-      !line_item.item?.do_not_ship
-  )
-
-  if (lineItems?.length === undefined) {
-    return false
-  }
-  // riguardare
-  return lineItems.length > 0
-}
-
 export function isPaymentRequired(order: Order) {
   return !(order.total_amount_with_taxes_float === 0)
 }
@@ -347,17 +320,18 @@ export function calculateAddresses(
 export function calculateSettings(
   order: Order,
   isShipmentRequired: boolean,
+  isGuest: boolean,
   customerAddress?: CustomerAddress[]
 ) {
   // FIX saving customerAddresses because we don't receive
-  // them from fetchORder
+  // them from fetchOrder
   const calculatedAddresses = calculateAddresses(
     order,
     order.customer?.customer_addresses || customerAddress
   )
 
   return {
-    isGuest: Boolean(order.guest),
+    isGuest,
     shippingCountryCodeLock: order.shipping_country_code_lock,
     hasEmailAddress: Boolean(order.customer_email),
     emailAddress: order.customer_email,

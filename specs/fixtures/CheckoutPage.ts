@@ -173,9 +173,8 @@ export class CheckoutPage {
       | "purchase"
   ) {
     await this.page.waitForTimeout(2000)
-    const dataLayer: DataLayerWindowProps[] = await this.page.evaluate(
-      "window.dataLayer"
-    )
+    const dataLayer: DataLayerWindowProps[] =
+      await this.page.evaluate("window.dataLayer")
     return (
       dataLayer &&
       dataLayer.filter(
@@ -225,6 +224,17 @@ export class CheckoutPage {
       "data-status",
       value ? "true" : "false"
     )
+  }
+
+  async isVisibleShipToDifferentAddress(visible: boolean) {
+    const element = this.page.locator(
+      "[data-testid=button-ship-to-different-address]"
+    )
+    if (visible) {
+      await expect(element).toBeVisible()
+    } else {
+      await expect(element).toBeHidden()
+    }
   }
 
   async useCustomerCard() {
@@ -392,6 +402,7 @@ export class CheckoutPage {
   }
 
   async setShippingAddress(address?: Partial<Address>) {
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const { billing_info, ...addressToFill } = address || euAddress2
     await this.setAddress({ address: addressToFill, type: "shipping_address" })
   }
@@ -509,9 +520,15 @@ export class CheckoutPage {
     await expect(this.page.locator(`text=${text}`)).toBeVisible()
   }
 
+  async checkCustomerAddressesTitle(text: string) {
+    await expect(
+      this.page.getByTestId("customer-addresses-title")
+    ).toContainText(text)
+  }
+
   async checkShippingSummary(text?: string) {
     if (text === undefined) {
-      const element = await this.page.getByTestId("shipping-amount")
+      const element = this.page.getByTestId("shipping-amount")
       await expect(element).toHaveCount(0)
     } else {
       await this.page
@@ -522,12 +539,23 @@ export class CheckoutPage {
   }
 
   async checkLineItemsCount(text: string) {
-    const element = await this.page.locator(`[data-testid=items-count]`)
+    const element = this.page.locator(`[data-testid=items-count]`)
     await expect(element).toHaveText(text)
   }
 
-  async checkPaymentRecap(text: string) {
-    await expect(this.page.getByText(text)).toBeVisible()
+  async checkLineItemFrequency(text?: string) {
+    const element = this.page.locator(`[data-testid=line-items-frequency]`)
+    if (text) {
+      await expect(element).toContainText(text)
+    } else {
+      expect(element).toBeHidden()
+    }
+  }
+
+  async checkPaymentRecap(text: string, timeout?: number) {
+    await expect(this.page.getByText(text)).toBeVisible({
+      timeout: timeout ?? 5000,
+    })
   }
 
   async checkTaxSummary(text: string) {
@@ -538,6 +566,16 @@ export class CheckoutPage {
 
   async checkTaxLine(text: string) {
     await this.page.getByText(text).waitFor({ state: "visible" })
+  }
+
+  async checkLineItemAmount(text?: string) {
+    const element = await this.page.getByTestId(`line-item-amount`)
+    if (text !== undefined) {
+      await element.waitFor({ state: "visible" })
+      await expect(await element.innerText()).toBe(text)
+    } else {
+      await expect(element).toHaveCount(0)
+    }
   }
 
   async checkDiscountAmount(text?: string) {
@@ -624,6 +662,7 @@ export class CheckoutPage {
       | "adyen"
       | "checkout_com"
       | "adyen-dropin"
+      | "klarna"
   ) {
     let paymentMethod
     if (type === "wire") {
@@ -631,18 +670,18 @@ export class CheckoutPage {
     } else {
       paymentMethod = `${type}_payments`
     }
-    // await this.page.click(`[data-testid=${paymentMethod}]`, { force: true })
     await this.page.getByTestId(paymentMethod).click()
+    await this.page.waitForTimeout(2000)
     await this.page.mouse.wheel(0, 30)
   }
 
   async completePayment({
     type,
-    gateway,
+    gateway = "klarna_pay_now",
     language,
   }: {
-    type: "adyen-dropin"
-    gateway:
+    type: "adyen-dropin" | "klarna"
+    gateway?:
       | "paypal"
       | "card"
       | "card3DS"
@@ -652,6 +691,19 @@ export class CheckoutPage {
     language?: "fr" | "de"
   }) {
     switch (type) {
+      case "klarna": {
+        const [newPage] = await Promise.all([this.page.waitForEvent("popup")])
+        await newPage.locator("#onContinue").click()
+        await newPage.locator("#otp_field__container input").fill("123456")
+        await newPage.getByTestId("select-payment-category").click()
+        await newPage.getByTestId("pick-plan").click()
+        await newPage.getByTestId("confirm-and-pay").click()
+        await this.page
+
+          .locator("text=Thank you for your order!")
+          .waitFor({ state: "visible", timeout: 60000 })
+        break
+      }
       case "adyen-dropin": {
         switch (gateway) {
           case "paypal": {
@@ -685,7 +737,10 @@ export class CheckoutPage {
 
             await newPage.click("#btnLogin")
             await newPage.waitForTimeout(3000)
-            await newPage.click("#gdpr-container >> text=Accetta")
+            const banner = newPage.locator("#gdpr-container >> text=Accetta")
+            if (await banner.isVisible()) {
+              banner.click()
+            }
             await newPage.click('[data-testid="submit-button-initial"]')
 
             break
@@ -693,16 +748,12 @@ export class CheckoutPage {
           case "klarna_pay_now": {
             await this.page
               .getByRole("radio", {
-                name: "Pay now with Klarna. Pay now with Klarna.",
+                name: "Pay now with Klarna.",
               })
               .click()
             await this.page.getByTestId("save-payment-button").click()
-            await this.page.click("#buy-button")
 
-            const i = this.page.locator("#klarna-apf-iframe")
-            const klarnaIframe = this.page.frameLocator(
-              "#klarna-hpp-instance-fullscreen"
-            )
+            const klarnaIframe = this.page.frameLocator("#klarna-apf-iframe")
 
             await klarnaIframe
               .getByTestId("kaf-field")
@@ -715,9 +766,32 @@ export class CheckoutPage {
             await klarnaIframe.locator("input#otp_field").focus()
             await klarnaIframe.locator("input#otp_field").type("123456")
             await this.page.waitForTimeout(1000)
-            await klarnaIframe
-              .getByRole("button", { name: "Zahle 99,00 € jetzt" })
-              .click()
+            await klarnaIframe.getByTestId("pick-plan").click()
+            await klarnaIframe.getByTestId("confirm-and-pay").click()
+            const button = klarnaIframe.getByRole("button", { name: "Weiter" })
+            if (await button.isVisible()) {
+              button.click()
+            }
+
+            const pagePromise = await this.page
+              .waitForEvent("popup", { timeout: 5000 })
+              .then((pagePromise) => {
+                return pagePromise
+              })
+              .catch((error) => console.log(`no popup ${error}`))
+
+            if (pagePromise !== undefined) {
+              await pagePromise.getByText("Demo Bank").click()
+              await pagePromise.getByLabel("Kontonummer").click()
+              await pagePromise.getByLabel("Kontonummer").fill("12345678")
+              await pagePromise.getByLabel("PIN").click()
+              await pagePromise.getByLabel("PIN").fill("1234")
+              await pagePromise.waitForTimeout(2000)
+              await pagePromise.getByRole("button", { name: "Weiter" }).click()
+              await pagePromise.getByLabel("TAN").click()
+              await pagePromise.getByLabel("TAN").fill("12345")
+              await pagePromise.getByRole("button", { name: "Weiter" }).click()
+            }
             break
           }
           case "klarna_pay_later": {
@@ -730,12 +804,8 @@ export class CheckoutPage {
 
             await this.page.click("[data-testid=save-payment-button]")
             await this.page.waitForTimeout(4000)
-            await this.page.click("#buy-button")
 
-            const i = this.page.locator("#klarna-apf-iframe")
-            const klarnaIframe = this.page.frameLocator(
-              "#klarna-hpp-instance-fullscreen"
-            )
+            const klarnaIframe = this.page.frameLocator("#klarna-apf-iframe")
 
             await klarnaIframe
               .getByTestId("kaf-field")
@@ -749,9 +819,8 @@ export class CheckoutPage {
             await klarnaIframe.locator("input#otp_field").type("123456")
             await this.page.waitForTimeout(1000)
 
-            await klarnaIframe
-              .locator("#invoice_kp-purchase-review-continue-button")
-              .click()
+            await klarnaIframe.getByTestId("confirm-and-pay").click()
+
             break
           }
           case "klarna_pay_over_time": {
@@ -763,9 +832,9 @@ export class CheckoutPage {
                 }
               )
               await this.page.click("[data-testid=save-payment-button]")
-              await this.page.click("#buy-button")
+              // await this.page.click("#buy-button")
 
-              const i = this.page.locator("#klarna-apf-iframe")
+              // const i = this.page.locator("#klarna-apf-iframe")
               const klarnaIframe = this.page.frameLocator("#klarna-apf-iframe")
 
               await klarnaIframe
@@ -780,13 +849,20 @@ export class CheckoutPage {
               await klarnaIframe.locator("input#otp_field").type("123456")
               await this.page.waitForTimeout(2000)
 
-              await klarnaIframe
-                .locator("[data-testid=confirm-and-pay]")
-                .click()
+              const confirm = klarnaIframe.locator(
+                "[data-testid=confirm-and-pay]"
+              )
 
-              await klarnaIframe
-                .locator('[data-testid="SmoothCheckoutPopUp:enable"]')
-                .click()
+              if (await confirm.isVisible()) {
+                confirm.click()
+              }
+
+              const popup = await klarnaIframe.locator(
+                '[data-testid="SmoothCheckoutPopUp:enable"]'
+              )
+              if (await popup.isVisible()) {
+                await popup.click()
+              }
             } else {
               await this.page.click(
                 "[data-testid=adyen_payments] >> text=Pay over time",
@@ -797,12 +873,8 @@ export class CheckoutPage {
 
               await this.page.click("[data-testid=save-payment-button]")
               await this.page.waitForTimeout(5000)
-              await this.page.click("#buy-button")
 
-              const i = this.page.locator("#klarna-apf-iframe")
-              const klarnaIframe = this.page.frameLocator(
-                "#klarna-hpp-instance-fullscreen"
-              )
+              const klarnaIframe = this.page.frameLocator("#klarna-apf-iframe")
 
               await klarnaIframe
                 .getByTestId("kaf-field")
@@ -816,7 +888,10 @@ export class CheckoutPage {
               await klarnaIframe.locator("input#otp_field").type("123456")
               await this.page.waitForTimeout(1000)
 
-              // await klarnaIframe.getByTestId("kaf-button").click()
+              const emailButton = klarnaIframe.getByTestId("kaf-button")
+              if (await emailButton.isVisible()) {
+                emailButton.click()
+              }
 
               // await klarnaIframe
               //   .locator("input#addressCollector-date_of_birth")
@@ -827,16 +902,27 @@ export class CheckoutPage {
 
               // await klarnaIframe.getByTestId("kaf-button").click()
               // await this.page.waitForTimeout(2000)
-
+              await klarnaIframe.getByTestId("pick-plan").click()
               await klarnaIframe
-                .locator(
-                  "#fixedsumcredit_kp-purchase-review-secci-toggle__root"
-                )
-                .click({ position: { x: 10, y: 10 } })
-
-              await klarnaIframe
-                .locator("#fixedsumcredit_kp-purchase-review-continue-button")
+                .locator("label")
+                .filter({
+                  hasText:
+                    "Ich habe die vorvertraglichen Informationen gelesen und bestätige, dass ich den Kreditvertrag abschließen möchte.",
+                })
+                .locator("div")
+                .nth(1)
                 .click()
+              await klarnaIframe.getByTestId("confirm-and-pay").click()
+
+              const iban = klarnaIframe.getByRole("textbox", {
+                name: "IBAN übermitteln",
+              })
+
+              if (await iban.isVisible()) {
+                iban.click()
+                iban.fill("DE91100000000123456789")
+                klarnaIframe.getByRole("button", { name: "Bestätigen" }).click()
+              }
             }
             break
           }
@@ -899,7 +985,7 @@ export class CheckoutPage {
     }
   }
 
-  async enter3DSecure({ type, text }: { type: "adyen"; text: string }) {
+  async enter3DSecure({ text }: { type: "adyen"; text: string }) {
     await this.page.waitForTimeout(3000)
     const secureFrame = this.page.frameLocator("iframe[name=threeDSIframe]")
     await this.page.waitForTimeout(2000)
@@ -914,6 +1000,7 @@ export class CheckoutPage {
   async setPayment(
     type:
       | "stripe"
+      | "stripe-paypal"
       | "braintree"
       | "paypal"
       | "adyen"
@@ -927,14 +1014,30 @@ export class CheckoutPage {
   ) {
     switch (type) {
       case "stripe": {
-        const stripeFrame = this.page.frameLocator("iframe").first()
+        const stripeFrame = this.page
+          .frameLocator("[data-testid=stripe_payments] iframe")
+          .first()
+
+        const creditCard = {
+          number: card?.number ?? "4242424242424242",
+          exp: card?.exp ?? "0235",
+          cvc: card?.cvc ?? "321",
+        }
         await stripeFrame
-          .locator("input[name=cardnumber]")
-          .fill(card?.number || "4242424242424242")
-        await stripeFrame
-          .locator("input[name=exp-date]")
-          .fill(card?.exp || "0231")
-        await stripeFrame.locator("input[name=cvc]").fill(card?.cvc || "321")
+          .getByPlaceholder("1234 1234 1234 1234")
+          .fill(creditCard.number)
+        await stripeFrame.getByPlaceholder("MM / YY").fill(creditCard.exp)
+        await stripeFrame.getByPlaceholder("CVC").fill(creditCard.cvc)
+        break
+      }
+      case "stripe-paypal": {
+        await this.page.waitForTimeout(2000)
+        await this.page.mouse.wheel(0, 300)
+
+        const stripeFrame = this.page
+          .frameLocator("[data-testid=stripe_payments] iframe")
+          .first()
+        await stripeFrame.getByRole("button", { name: "PayPal" }).click()
         break
       }
       case "braintree": {
@@ -1043,6 +1146,7 @@ export class CheckoutPage {
     const buttonId = this.page.getByTestId(
       `save-${step.toLocaleLowerCase()}-button`
     )
+    await buttonId.focus()
     switch (step) {
       case "Customer":
         await buttonId.isEnabled()
@@ -1060,7 +1164,7 @@ export class CheckoutPage {
         break
       case "Payment": {
         const text = waitText || "Thank you for your order"
-        await buttonId.isEnabled()
+        await buttonId.isEnabled({ timeout: 3000 })
         await buttonId.click()
 
         if (waitText === "Paga con PayPal") {

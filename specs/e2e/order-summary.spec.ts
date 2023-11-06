@@ -113,8 +113,8 @@ test.describe("quantity and unit price", () => {
 test.describe("sku options", () => {
   const customerEmail = faker.internet.email().toLocaleLowerCase()
   const company = faker.company.name()
-  const firstName = faker.name.firstName()
-  const lastName = faker.name.lastName()
+  const firstName = faker.person.firstName()
+  const lastName = faker.person.lastName()
   const name = `${firstName} ${lastName}`
 
   test.use({
@@ -166,6 +166,50 @@ test.describe("sku options", () => {
 
     element = checkoutPage.page.locator(`text=Name:${name}`)
     await expect(element).toHaveCount(1)
+  })
+})
+
+test.describe("sku options with price", () => {
+  const customerEmail = faker.internet.email().toLocaleLowerCase()
+  const firstName = faker.person.firstName()
+  const lastName = faker.person.lastName()
+  const letters = `${firstName[0]}${lastName[0]}`
+
+  test.use({
+    defaultParams: {
+      order: "with-items",
+      orderAttributes: {
+        customer_email: customerEmail,
+      },
+      lineItemsAttributes: [
+        {
+          sku_code: "CANVASAU000000FFFFFF1824",
+          quantity: 1,
+          final_quantity: 2,
+          sku_options: [
+            {
+              name: "Initials",
+              value: {
+                letters,
+              },
+            },
+          ],
+        },
+      ],
+      addresses: {
+        billingAddress: euAddress,
+        sameShippingAddress: true,
+      },
+    },
+  })
+
+  test("should match SKUs quantity", async ({ checkoutPage }) => {
+    test.skip()
+    await checkoutPage.checkOrderSummary("Order Summary")
+    await checkoutPage.checkStep("Shipping", "open")
+    const element = checkoutPage.page.locator(`text=Letters:${letters}`)
+    await expect(element).toHaveCount(1)
+    await checkoutPage.checkLineItemAmount("€200,00")
   })
 })
 
@@ -446,5 +490,44 @@ test.describe("count buying gift card", () => {
   test("should count the right items", async ({ checkoutPage }) => {
     await checkoutPage.checkOrderSummary("Order Summary")
     await checkoutPage.checkLineItemsCount("Your shopping cart contains 1 item")
+  })
+})
+
+test.describe("line item with frequency", () => {
+  test.use({
+    defaultParams: {
+      order: "with-items",
+      lineItemsAttributes: [
+        {
+          sku_code: "TSHIRTMMFFFFFF000000XLXX",
+          quantity: 1,
+          frequency: "monthly",
+        },
+      ],
+    },
+  })
+
+  test("should show the monthly frequency", async ({ checkoutPage }) => {
+    await checkoutPage.checkOrderSummary("Order Summary")
+    await checkoutPage.checkLineItemFrequency("Monthly")
+  })
+})
+
+test.describe("line item without frequency", () => {
+  test.use({
+    defaultParams: {
+      order: "with-items",
+      lineItemsAttributes: [
+        {
+          sku_code: "TSHIRTMMFFFFFF000000XLXX",
+          quantity: 1,
+        },
+      ],
+    },
+  })
+
+  test("should show the monthly frequency", async ({ checkoutPage }) => {
+    await checkoutPage.checkOrderSummary("Order Summary")
+    await checkoutPage.checkLineItemFrequency()
   })
 })

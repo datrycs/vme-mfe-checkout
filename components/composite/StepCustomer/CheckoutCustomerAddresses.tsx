@@ -98,23 +98,6 @@ export const CheckoutCustomerAddresses: React.FC<Props> = ({
     }
   }, [shipToDifferentAddress])
 
-  useEffect(() => {
-    // temp fix to resolve flag bug
-    if (showBillingAddressForm) {
-      localStorage.setItem(
-        "_save_billing_address_to_customer_address_book",
-        "false"
-      )
-    }
-    if (showShippingAddressForm) {
-      localStorage.setItem(
-        "_save_shipping_address_to_customer_address_book",
-        "false"
-      )
-    }
-    // --
-  }, [showBillingAddressForm, showShippingAddressForm])
-
   const handleScroll = (type: AddressTypeEnum) => {
     const tab = document
       .querySelector(`h3[data-testid="${type}-address"]`)
@@ -168,7 +151,7 @@ export const CheckoutCustomerAddresses: React.FC<Props> = ({
       <AddressSectionEmail readonly emailAddress={emailAddress as string} />
       <AddressesContainer shipToDifferentAddress={shipToDifferentAddress}>
         <AddressSectionTitle data-testid="billing-address">
-          {t(`addressForm.billing_address_title`)}
+          <>{t(`addressForm.billing_address_title`)}</>
         </AddressSectionTitle>
         <div className="relative">
           <>
@@ -241,7 +224,7 @@ export const CheckoutCustomerAddresses: React.FC<Props> = ({
             />
             <div className={`${shipToDifferentAddress ? "" : "hidden"} mb-2`}>
               <AddressSectionTitle data-testid="shipping-address">
-                {t(`addressForm.shipping_address_title`)}
+                <>{t(`addressForm.shipping_address_title`)}</>
               </AddressSectionTitle>
             </div>
             <div

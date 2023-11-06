@@ -1,3 +1,104 @@
+## [4.2.3](https://github.com/commercelayer/mfe-checkout/compare/v4.2.2...v4.2.3) (2023-11-03)
+
+
+### Bug Fixes
+
+* avoid check on country code lock for digital orders ([b34c2d1](https://github.com/commercelayer/mfe-checkout/commit/b34c2d141f85ea66be44aca935ca3b36999b430e))
+
+## [4.2.2](https://github.com/commercelayer/mfe-checkout/compare/v4.2.1...v4.2.2) (2023-11-02)
+
+
+### Bug Fixes
+
+* ignore `shipping_country_code_lock` for order with digital products only ([0b41ed1](https://github.com/commercelayer/mfe-checkout/commit/0b41ed1610b9dc978bdbc164bf859616a74b7dcb))
+* refer to billing address for order with digital products only ([11f8e41](https://github.com/commercelayer/mfe-checkout/commit/11f8e4182a1cf01eb0e0c1cebd1bb65f51fb30d5))
+
+## [4.2.1](https://github.com/commercelayer/mfe-checkout/compare/v4.2.0...v4.2.1) (2023-10-25)
+
+
+### Bug Fixes
+
+* show all form errors and avoid blinking on border ([4c37447](https://github.com/commercelayer/mfe-checkout/commit/4c3744758aa78ebf62450b5d1e2fece6c4c38a66))
+
+# [4.2.0](https://github.com/commercelayer/mfe-checkout/compare/v4.1.5...v4.2.0) (2023-10-20)
+
+
+### Features
+
+* improve GTM performances removing calls to Commerce Layer ([95e6840](https://github.com/commercelayer/mfe-checkout/commit/95e68406a38c1ea4a96e902c5596c593a3193669))
+
+## [4.1.5](https://github.com/commercelayer/mfe-checkout/compare/v4.1.4...v4.1.5) (2023-10-20)
+
+
+### Performance Improvements
+
+* make two setup calls in parallel ([95dea4b](https://github.com/commercelayer/mfe-checkout/commit/95dea4ba7e5c2458d0025d13c0a8df36e7c5d576))
+
+## [4.1.4](https://github.com/commercelayer/mfe-checkout/compare/v4.1.3...v4.1.4) (2023-10-20)
+
+
+### Bug Fixes
+
+* update selector for Klarna payment terms checkbox (german) ([efcb78f](https://github.com/commercelayer/mfe-checkout/commit/efcb78fe329bb91ec3df84e1df8ec5c3e1d8dfcb))
+
+## [4.1.3](https://github.com/commercelayer/mfe-checkout/compare/v4.1.2...v4.1.3) (2023-10-19)
+
+
+### Bug Fixes
+
+* update all deps and types ([e061e98](https://github.com/commercelayer/mfe-checkout/commit/e061e985a8f106d18249dd68a19bc1d19ddbf2c2))
+
+## [4.1.2](https://github.com/commercelayer/mfe-checkout/compare/v4.1.1...v4.1.2) (2023-10-13)
+
+
+### Bug Fixes
+
+* avoid losing focus on shipping method selection ([cfc2916](https://github.com/commercelayer/mfe-checkout/commit/cfc2916e33408e2937c144e787f9444de2ad49cd))
+
+## [4.1.1](https://github.com/commercelayer/mfe-checkout/compare/v4.1.0...v4.1.1) (2023-10-09)
+
+
+### Bug Fixes
+
+* bump dependencies with vulnerabilities ([981f025](https://github.com/commercelayer/mfe-checkout/commit/981f0256cebc92323d8eb07d5b6b48507fad960a))
+* new layout spacing and margins ([103cb12](https://github.com/commercelayer/mfe-checkout/commit/103cb12ac08be6a3a9af655e109f4e72c4af5e44))
+
+# [4.1.0](https://github.com/commercelayer/mfe-checkout/compare/v4.0.15...v4.1.0) (2023-10-03)
+
+
+### Features
+
+* add native Klarna support ([93743be](https://github.com/commercelayer/mfe-checkout/commit/93743be0f8a4d049a352d6589631bc19488e21eb))
+
+## [4.0.15](https://github.com/commercelayer/mfe-checkout/compare/v4.0.14...v4.0.15) (2023-09-29)
+
+
+### Bug Fixes
+
+* populate isGuest state based on the access token ([0b51d7d](https://github.com/commercelayer/mfe-checkout/commit/0b51d7de8522e3378c9d252dd0ddf12eb3911737))
+
+
+### Performance Improvements
+
+* avoid sync call for refreshing the order on opening ([e7707e5](https://github.com/commercelayer/mfe-checkout/commit/e7707e5ba67030954b575b11c8ab512e03837d02))
+
+## [4.0.14](https://github.com/commercelayer/mfe-checkout/compare/v4.0.13...v4.0.14) (2023-09-13)
+
+
+### Bug Fixes
+
+* add support for External shipping method ([05963db](https://github.com/commercelayer/mfe-checkout/commit/05963dbd95dac3749770900078a6efae56482d58))
+* enable stripe with latest `react-components` package ([64d8eee](https://github.com/commercelayer/mfe-checkout/commit/64d8eee27355e03b0f8d9688bb75dee538c5e5d5))
+* Save addresses on wallet and update `react-components` to the latest version ([27f637a](https://github.com/commercelayer/mfe-checkout/commit/27f637ac4bb723e50093d15fed679739392760bd))
+
+## [4.0.13](https://github.com/commercelayer/mfe-checkout/compare/v4.0.12...v4.0.13) (2023-08-23)
+
+
+### Bug Fixes
+
+* add support for crontab frequency ([551878c](https://github.com/commercelayer/mfe-checkout/commit/551878c89fbf65cd585531ab588f992207503a8f))
+* display subscription frequency on summary ([6d43494](https://github.com/commercelayer/mfe-checkout/commit/6d434942a0ec5606c4c70b312dfc5e774f9ef0e6))
+
 ## [4.0.12](https://github.com/commercelayer/mfe-checkout/compare/v4.0.11...v4.0.12) (2023-07-25)
 
 

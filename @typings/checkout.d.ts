@@ -12,13 +12,15 @@ interface CheckoutSettings {
   orderId: string
   orderNumber: number
   validCheckout: true
+  isGuest: boolean
+  isShipmentRequired: boolean
   endpoint: string
   domain: string
   slug: string
   logoUrl: NullableType<string>
   companyName: string
   language: string
-  primaryColor: HSLProps
+  primaryColor: string
   favicon: string
   gtmId: NullableType<string>
   supportEmail: NullableType<string>
@@ -37,6 +39,7 @@ type CheckoutPageContextProps = Pick<
   | "accessToken"
   | "orderId"
   | "logoUrl"
+  | "isGuest"
   | "companyName"
   | "endpoint"
   | "language"

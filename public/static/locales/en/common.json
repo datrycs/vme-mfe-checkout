@@ -50,7 +50,20 @@
         "subtotal_amount": "Subtotal",
         "total_amount": "Total",
         "notSet": "To be calculated",
-        "returnToCart": "Return to cart"
+        "returnToCart": "Return to cart",
+        "frequency.hourly": "Hourly",
+        "frequency.daily": "Daily",
+        "frequency.weekly": "Weekly",
+        "frequency.monthly": "Monthly",
+        "frequency.two-months": "Every two months",
+        "frequency.two-month": "Every two months",
+        "frequency.three-months": "Every three months",
+        "frequency.three-month": "Every three months",
+        "frequency.four-months": "Every four months",
+        "frequency.four-month": "Every four months",
+        "frequency.six-months": "Every six months",
+        "frequency.six-month": "Every six months",
+        "frequency.yearly": "Yearly"
     },
 
     "stepCustomer": {
@@ -58,7 +71,8 @@
         "addNewAddress": "Add new address",
         "saveAddressBook": "Save this address in your account",
         "continueToDelivery": "Continue to delivery",
-        "notSet": "Fill in your Billing/Shipping Address",
+        "notSet": "Fill in your billing/shipping address",
+        "notSetNoDelivery": "Fill in your billing address",
         "closeForm": "Choose address"
     },
 
@@ -74,6 +88,7 @@
         "methodSelected_other": "Your order contains {{count}} shipments",
         "methodUnselected": "Select a shipping method",
         "deliveryLeadTime" : "<0/> - <1/> days",
+        "externalPrice": "At next step",
         "continueToPayment": "Continue to payment",
         "notRequired": "This order does not require shipping"
     },

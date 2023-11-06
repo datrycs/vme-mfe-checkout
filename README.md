@@ -25,9 +25,10 @@ The Commerce Layer Checkout application (React) provides you with a PCI-complian
 
 2. Set the environment variable `NEXT_PUBLIC_SLUG` on your hosting provider to your organization slug (subdomain) and be sure to build the forked repository using the node environment (`NODE_ENV`) as production.
 
-3. Deploy the forked repository to your preferred hosting service or host it yourself. You can deploy with one click below:
+3. Deploy the forked repository to your preferred hosting service. You can deploy with one click below:
 
-[<img src="https://www.netlify.com/img/deploy/button.svg" alt="Deploy to Netlify" height="35">](https://app.netlify.com/start/deploy?repository=https://github.com/commercelayer/mfe-checkout) [<img src="https://vercel.com/button" alt="Deploy to Vercel" height="35">](https://vercel.com/new/clone?repository-url=https://github.com/commercelayer/mfe-checkout) [<img src="https://www.herokucdn.com/deploy/button.svg" alt="Deploy to Heroku" height="35">](https://heroku.com/deploy?template=https://github.com/commercelayer/mfe-checkout) [<img src="https://www.deploytodo.com/do-btn-blue.svg" alt="Deploy to Digital Ocean" height="35">](https://cloud.digitalocean.com/apps/new?repo=https://github.com/commercelayer/mfe-checkout/tree/main)
+[<img src="https://www.netlify.com/img/deploy/button.svg" alt="Deploy to Netlify" height="35">](https://app.netlify.com/start/deploy?repository=https://github.com/commercelayer/mfe-checkout#NEXT_PUBLIC_SLUG) [<img src="https://vercel.com/button" alt="Deploy to Vercel" height="35">](https://vercel.com/new/clone?repository-url=https://github.com/commercelayer/mfe-checkout&build-command=pnpm%20export&output-directory=out&env=NEXT_PUBLIC_SLUG&envDescription=your%20organization%20slug) 
+
 
 4. Build your sales channel with your favorite technologies and frameworks by leveraging our [developer resources](https://commercelayer.io/developers) and [documentation](https://docs.commercelayer.io/api).
 
@@ -65,8 +66,6 @@ commercelayer checkout -O <orderID> --open
 
 The Commerce Layer Checkout application supports most of the main features available through the Commerce Layer API. We're working to add a few missing ones within the next development iterations.
 
-> **COMING SOON** — [Order subscriptions](https://docs.commercelayer.io/developers/v/api-reference/order_subscriptions) aren't currently supported by the Checkout application, but will be available shortly.
-
 The Checkout application includes an [order summary](#order-summary) and a checkout flow made of 3 steps:
 
 1. [Customer](#customer-step)
@@ -79,7 +78,7 @@ Once the checkout is successfully completed, the customer is redirected to a [th
 
 ### Order summary
 
-The Checkout application shows a visual summary of the order that's about to be placed detailing all the involved line items (order amounts, shipping costs, taxes, discounts, etc.).
+The Checkout application shows a visual summary of the order that's about to be placed detailing all the involved line items (frequency of recurring items, order amounts, shipping costs, taxes, discounts, etc.).
 
 > We suggest properly setting up all the [SKU](https://docs.commercelayer.io/developers/v/api-reference/skus) information (in terms of names and images) on the Commerce Layer admin dashboard or via API so that this part is fully populated.
 
@@ -99,6 +98,21 @@ The Checkout application supports [bundles](https://docs.commercelayer.io/develo
 
 If the order has the attribute `cart_url` set, a "Return to cart" link will be displayed.
 
+### Order refresh
+
+When the checkout is opening, after getting the organization settings, the order might be refreshed if some conditions are met. Check the flowchart below to better understand how this logic works:
+
+```mermaid
+flowchart LR
+    A[Start] --> B{order.autorefresh?}
+    B -- true --> C{Token type?}
+    C -- Sales channel --> G
+    C -- Customer token --> D{order.guest?}
+    D -- false --> G[No refresh]
+    D -- true --> F
+    B -- false ----> F[Refresh sync]
+```
+
 ### Customer step
 
 Here is where customers provide their email address, billing and shipping information.
@@ -117,7 +131,7 @@ If the order has the attribute `shipping_country_code_lock` set, customers can s
 
 ### Delivery step
 
-Here is where customers select a shipping method for each shipment of their order.
+Here is where customers select a shipping method for each shipment of their order. [External shipping cost](https://docs.commercelayer.io/core/external-resources/external-shipping-costs) are partially supported by the Checkout application at the moment.
 
 #### Single shipping method
 
@@ -139,16 +153,18 @@ In the case of digital product purchases (i.e. SKUs with the `do_not_ship` flag 
 
 Here is where customers select a payment method and place the order.
 
-> We're working to make all the [payment gateways](https://docs.commercelayer.io/developers/v/how-tos/payments) supported by Commerce Layer available out-of-the-box in the Checkout application. [Klarna](https://docs.commercelayer.io/developers/v/how-tos/payments/klarna) integration will be available soon. [External payments](https://docs.commercelayer.io/developers/v/how-tos/payments/external-payments) are not supported by the Checkout application at the moment. For all the other gateways information please refer to the table below.
+> We're working to make all the [payment gateways](https://docs.commercelayer.io/developers/v/how-tos/payments) supported by Commerce Layer available out-of-the-box in the Checkout application. [External payments](https://docs.commercelayer.io/developers/v/how-tos/payments/external-payments) are not supported by the Checkout application at the moment. For all the other gateways information please refer to the table below.
 
 | Payment gateway                                                                               | Supported payment methods                                                                                                                               | Customer wallet |
 | --------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------- | --------------- |
 | [Adyen](https://docs.commercelayer.io/developers/v/how-tos/payments/adyen)                    | Credit card / [PayPal](https://docs.adyen.com/payment-methods/paypal/web-drop-in) / [Klarna](https://docs.adyen.com/payment-methods/klarna/web-drop-in) | &check;         |
 | [Braintree](https://docs.commercelayer.io/developers/v/how-tos/payments/braintree)            | Credit card                                                                                                                                             | &check;         |
-| [Checkout.com](https://docs.commercelayer.io/developers/v/how-tos/payments/checkout.com)      | Credit card                                                                                                                                             | &check;         |
+| [Klarna](https://docs.commercelayer.io/developers/v/how-tos/payments/klarna)                  | Klarna                                                                                                                                                  | &cross;         |
 | [PayPal](https://docs.commercelayer.io/developers/v/how-tos/payments/paypal)                  | PayPal                                                                                                                                                  | &cross;         |
-| [Stripe](https://docs.commercelayer.io/developers/v/how-tos/payments/stripe)                  | Credit card                                                                                                                                             | &check;         |
+| [Stripe](https://docs.commercelayer.io/developers/v/how-tos/payments/stripe)                  | Credit card / Apple Pay / Google Pay / PayPal / Klarna                                                                                                  | &check;         |
 | [Manual gateway](https://docs.commercelayer.io/developers/v/how-tos/payments/manual-payments) | Manual payment                                                                                                                                          | &cross;         |
+
+> To automatically accept payment methods enabled in the Stripe dashboard please make sure to properly set up the `auto_payments` option on your [Stripe gateway](https://docs.commercelayer.io/core/v/api-reference/stripe_gateways).
 
 > When using PayPal via Adyen please make sure to properly [set up third-party access](https://docs.adyen.com/payment-methods/paypal/web-drop-in#grant-api-access) on your PayPal first.
 
@@ -209,9 +225,9 @@ git clone https://github.com/<your username>/mfe-checkout.git && cd mfe-checkout
 
 3. First, install dependencies and run the development server:
 
-```
-yarn install
-yarn dev
+```bash
+pnpm install
+pnpm dev
 ```
 
 4. Set your environment with `.env.local` starting from `.env.local.sample`.

@@ -27,7 +27,9 @@ type OrderType =
 interface BaseLineItemObject {
   quantity: number
   inventory?: number
+  frequency?: string
   sku_options?: Array<Record<string, string | object>>
+  final_quantity?: number
 }
 
 interface SkuItem extends BaseLineItemObject {
@@ -312,6 +314,7 @@ const getOrder = async (
             id: a.id,
             reference: a.id,
           })
+          // @ts-expect-error sdf
           return customerCl.customer_addresses.create({
             customer: customerCl.customers.relationship(id),
             address: customerCl.addresses.relationship(a),
@@ -449,7 +452,8 @@ const createLineItems = async ({
   items: Array<LineItemObject>
 }) => {
   const lineItems = items.map((item) => {
-    const { sku_options, inventory, ...tail } = item
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    const { sku_options, inventory, final_quantity, ...tail } = item
     const lineItem = {
       ...tail,
       order: cl.orders.relationship(orderId),
@@ -484,9 +488,34 @@ const createLineItems = async ({
     await Promise.all(
       lineItemsOptions.filter((item) => item !== undefined).flat(2)
     )
+
+    // update line_items with final_quantity
+    const updateLineItems = items.map((item) => {
+      if (
+        isSkuItem(item) &&
+        item.final_quantity !== undefined &&
+        item.final_quantity > 0
+      ) {
+        const toUpdate = lineItemsCreated.find(
+          (i) => i.sku_code === item.sku_code
+        )
+        if (toUpdate) {
+          return cl.line_items.update({
+            id: toUpdate.id,
+            quantity: item.final_quantity,
+          })
+        }
+      }
+      return null
+    })
+    await Promise.all(updateLineItems)
   } catch (e) {
     console.log(e)
   }
+}
+
+function isSkuItem(item: SkuItem | BundleItem): item is SkuItem {
+  return (item as SkuItem).final_quantity !== undefined
 }
 
 const createDefaultLineItem = async (
