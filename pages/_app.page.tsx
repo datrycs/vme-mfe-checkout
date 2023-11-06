@@ -13,7 +13,11 @@ function CheckoutApp(props: AppProps) {
     if (typeof window !== "undefined") setBrowser(true)
   }, [])
 
-  return browser ? <Component {...pageProps} /> : null
+  return browser ? (
+    <>
+      <Component {...pageProps} />
+    </>
+  ) : null
 }
 
 export default appWithTranslation(CheckoutApp)
