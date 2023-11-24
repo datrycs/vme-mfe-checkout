@@ -22,7 +22,7 @@ class AppDocument extends Document {
           <Script
             id="Cookiebot"
             src="https://consent.cookiebot.com/uc.js"
-            data-cbid="b74842b6-6d68-458f-850a-6e36c45d5bc4"
+            data-cbid={`${process.env.NEXT_PUBLIC_COOKIEBOT_ID}`}
             data-blockingmode="auto"
             type="text/javascript"
           ></Script>
