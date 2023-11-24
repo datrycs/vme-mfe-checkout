@@ -19,6 +19,13 @@ class AppDocument extends Document {
     return (
       <Html>
         <Head>
+          <Script
+            id="Cookiebot"
+            src="https://consent.cookiebot.com/uc.js"
+            data-cbid="b74842b6-6d68-458f-850a-6e36c45d5bc4"
+            data-blockingmode="auto"
+            type="text/javascript"
+          ></Script>
           {/* <link rel="preconnect" href="https://fonts.gstatic.com" />
           <link
             href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap"
