@@ -1,11 +1,12 @@
 import type { Order } from "@commercelayer/sdk"
 import { useContext, useState } from "react"
-import { Trans, useTranslation } from "react-i18next"
+import { useTranslation } from "react-i18next"
+import styled from "styled-components"
+import tw from "twin.macro"
 
 import { AppContext } from "components/data/AppProvider"
 import { GTMContext } from "components/data/GTMProvider"
 import { FlexContainer } from "components/ui/FlexContainer"
-import { Label } from "components/ui/Label"
 import { SpinnerIcon } from "components/ui/SpinnerIcon"
 
 import { ErrorIcon } from "./ErrorIcon"
@@ -17,9 +18,9 @@ import {
   ErrorWrapper,
   StyledErrors,
   StyledPlaceOrderButton,
-  StyledPrivacyAndTermsCheckbox,
   PlaceOrderButtonWrapper,
 } from "./styled"
+import TermsContent from "./TermsContent"
 
 interface Props {
   isActive: boolean
@@ -27,14 +28,11 @@ interface Props {
   privacyUrl: NullableType<string>
 }
 
-const StepPlaceOrder: React.FC<Props> = ({
-  isActive,
-  termsUrl,
-  privacyUrl,
-}) => {
+const StepPlaceOrder: React.FC<Props> = ({ isActive }) => {
   const { t } = useTranslation()
 
   const [isPlacingOrder, setIsPlacingOrder] = useState(false)
+  const [acceptedTerms, setAcceptedTerms] = useState(false)
 
   const appCtx = useContext(AppContext)
   const gtmCtx = useContext(GTMContext)
@@ -102,33 +100,24 @@ const StepPlaceOrder: React.FC<Props> = ({
       </ErrorsContainer>
 
       <>
-        {!!termsUrl && !!privacyUrl && (
-          <FlexContainer className="items-start mx-5 mt-4 mb-2.5 md:mb-5 md:pb-5 md:mx-0 md:mt-0 md:border-b lg:pl-8">
-            <StyledPrivacyAndTermsCheckbox
-              id="privacy-terms"
-              className="relative form-checkbox top-0.5"
-              data-testid="checkbox-privacy-and-terms"
+        <FlexContainer className="items-start mx-5 mt-4 mb-2.5 md:mb-5 md:pb-5 md:mx-0 md:mt-0 md:border-b ">
+          <TermsLabel htmlFor="accept-terms">
+            <TermsInput
+              type="checkbox"
+              name="terms"
+              id="accept-terms"
+              checked={acceptedTerms}
+              onChange={(e) => setAcceptedTerms(e.target.checked)}
             />
-            <Label htmlFor="privacy-terms">
-              <Trans
-                i18nKey="general.privacy_and_terms"
-                components={{
-                  bold: <strong />,
-                  termsUrl: (
-                    <a href={termsUrl} target="_blank" rel="noreferrer" />
-                  ),
-                  privacyUrl: (
-                    <a href={privacyUrl} target="_blank" rel="noreferrer" />
-                  ),
-                }}
-              />
-            </Label>
-          </FlexContainer>
-        )}
+            <TermsContent />
+          </TermsLabel>
+        </FlexContainer>
+
         <PlaceOrderButtonWrapper>
           <StyledPlaceOrderButton
             data-testid="save-payment-button"
             isActive={isActive}
+            isTermsAccepted={acceptedTerms}
             onClick={handlePlaceOrder}
             label={
               <>
@@ -142,5 +131,13 @@ const StepPlaceOrder: React.FC<Props> = ({
     </>
   )
 }
+
+const TermsLabel = styled.label`
+  ${tw`mb-5`}
+`
+
+const TermsInput = styled.input`
+  ${tw`mr-2`}
+`
 
 export default StepPlaceOrder
