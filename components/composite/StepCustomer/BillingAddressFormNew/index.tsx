@@ -65,29 +65,33 @@ export const BillingAddressFormNew: React.FC<Props> = ({
           resource="billing_address"
           type="text"
           openShippingAddress={openShippingAddress}
-          value={billingAddress?.country_code || ""}
+          value={billingAddress?.country_code || "DE"}
         />
       </Grid>
-      <Grid>
-        <AddressInputGroup
-          fieldName="billing_address_state_code"
-          resource="billing_address"
-          type="text"
-          value={billingAddress?.state_code || ""}
-        />
+      <RowReverse>
+        <Invisible>
+          <AddressInputGroup
+            fieldName="billing_address_state_code"
+            resource="billing_address"
+            type="text"
+            value={"--"}
+          />
+        </Invisible>
         <AddressInputGroup
           fieldName="billing_address_zip_code"
           resource="billing_address"
           type="text"
           value={billingAddress?.zip_code || ""}
         />
-      </Grid>
-      <AddressInputGroup
-        fieldName="billing_address_phone"
-        resource="billing_address"
-        type="tel"
-        value={billingAddress?.phone || ""}
-      />
+      </RowReverse>
+      <Invisible>
+        <AddressInputGroup
+          fieldName="billing_address_phone"
+          resource="billing_address"
+          type="tel"
+          value={"--"}
+        />
+      </Invisible>
       {requiresBillingInfo && (
         <AddressInputGroup
           fieldName="billing_address_billing_info"
@@ -106,4 +110,14 @@ const Wrapper = styled.div`
 
 const Grid = styled.div`
   ${tw`grid lg:grid-cols-2 lg:gap-4`}
+`
+const RowReverse = styled.div`
+  ${tw`flex flex-row-reverse lg:gap-4`}
+  & > div {
+    ${tw`w-full`}
+  }
+`
+
+const Invisible = styled.div`
+  ${tw`invisible`}
 `

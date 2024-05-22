@@ -57,17 +57,19 @@ export const ShippingAddressFormNew: React.FC<Props> = ({
           fieldName="shipping_address_country_code"
           resource="shipping_address"
           type="text"
-          value={shippingAddress?.country_code || ""}
+          value={shippingAddress?.country_code || "DE"}
         />
       </Grid>
 
-      <Grid>
-        <AddressInputGroup
-          fieldName="shipping_address_state_code"
-          resource="shipping_address"
-          type="text"
-          value={shippingAddress?.state_code || ""}
-        />
+      <RowReverse>
+        <Invisible>
+          <AddressInputGroup
+            fieldName="shipping_address_state_code"
+            resource="shipping_address"
+            type="text"
+            value={shippingAddress?.state_code || "--"}
+          />
+        </Invisible>
 
         <AddressInputGroup
           fieldName="shipping_address_zip_code"
@@ -75,18 +77,29 @@ export const ShippingAddressFormNew: React.FC<Props> = ({
           type="text"
           value={shippingAddress?.zip_code || ""}
         />
-      </Grid>
-
-      <AddressInputGroup
-        fieldName="shipping_address_phone"
-        resource="shipping_address"
-        type="tel"
-        value={shippingAddress?.phone || ""}
-      />
+      </RowReverse>
+      <Invisible>
+        <AddressInputGroup
+          fieldName="shipping_address_phone"
+          resource="shipping_address"
+          type="tel"
+          value={shippingAddress?.phone || "--"}
+        />
+      </Invisible>
     </Fragment>
   )
 }
 
 const Grid = styled.div`
   ${tw`grid lg:grid-cols-2 lg:gap-4`}
+`
+const RowReverse = styled.div`
+  ${tw`flex flex-row-reverse lg:gap-4`}
+  & > div {
+    ${tw`w-full`}
+  }
+`
+
+const Invisible = styled.div`
+  ${tw`invisible`}
 `

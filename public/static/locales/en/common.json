@@ -152,6 +152,27 @@
         "customer_title": "Customer",
         "email": "E-mail:",
         "free_payment": "This order did not require a payment"
-    }
+    },
 
+    "termsContent": {
+      "orderAcceptance": "By placing your order, you accept our",
+      "generalTerms": "General Terms and Conditions",
+      "commaDas": ", the",
+      "rightOfWithdrawal": "Right of Withdrawal",
+      "andDie": "and the",
+      "dataProtection": "Data Protection Regulations",
+      "asWellAsDie": "as well as the",
+      "returnInstructions": "Return Instructions",
+      "acknowledgement": "acknowledgement."
+    },
+
+    "footer": {
+      "impressum": "Imprint",
+      "generalTerms": "General Terms and Conditions",
+      "dataProtection": "Data Protection",
+      "rightOfWithdrawal": "Right of Withdrawal",
+      "faq": "FAQ",
+      "contact": "Contact",
+      "poweredBy": "Powered by"
+    }
 }
