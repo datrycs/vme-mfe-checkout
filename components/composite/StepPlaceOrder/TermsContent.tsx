@@ -1,11 +1,14 @@
+import { useTranslation } from "react-i18next"
 import { styled } from "styled-components"
 import tw from "twin.macro"
 import { links } from "utils/links"
 
 const TermsContent = () => {
+  const { t } = useTranslation()
+
   return (
     <Terms>
-      Mit Ihrer Bestellung nehmen Sie unsere{" "}
+      {t("termsContent.orderAcceptance")}{" "}
       <span>
         {" "}
         <a
@@ -14,10 +17,10 @@ const TermsContent = () => {
           style={{ textDecoration: "underline" }}
           rel="noreferrer"
         >
-          AGB
+          {t("termsContent.generalTerms")}
         </a>{" "}
       </span>
-      , das
+      {t("termsContent.commaDas")}
       <span>
         {" "}
         <a
@@ -26,10 +29,10 @@ const TermsContent = () => {
           style={{ textDecoration: "underline" }}
           rel="noreferrer"
         >
-          Widerrufsrecht
+          {t("termsContent.rightOfWithdrawal")}
         </a>{" "}
       </span>
-      und die
+      {t("termsContent.andDie")}
       <span>
         {" "}
         <a
@@ -38,10 +41,10 @@ const TermsContent = () => {
           style={{ textDecoration: "underline" }}
           rel="noreferrer"
         >
-          Datenschutzbestimmungen
+          {t("termsContent.dataProtection")}
         </a>{" "}
       </span>
-      sowie die
+      {t("termsContent.asWellAsDie")}
       <span>
         {" "}
         <a
@@ -50,10 +53,10 @@ const TermsContent = () => {
           style={{ textDecoration: "underline" }}
           rel="noreferrer"
         >
-          Ruckgabenhinweise
+          {t("termsContent.returnInstructions")}
         </a>{" "}
       </span>
-      zur Kenntnis.
+      {t("termsContent.acknowledgement")}
     </Terms>
   )
 }

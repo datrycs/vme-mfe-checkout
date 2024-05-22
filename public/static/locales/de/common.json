@@ -153,7 +153,25 @@
         "customer_title": "Kunde",
         "email": "E-Mail:",
         "free_payment": "Diese Bestellung erforderte keine Zahlung"  
+    }, 
+  "termsContent": {
+        "orderAcceptance": "Mit Ihrer Bestellung nehmen Sie unsere",
+        "generalTerms": "AGB",
+        "commaDas": ", das",
+        "rightOfWithdrawal": "Widerrufsrecht",
+        "andDie": "und die",
+        "dataProtection": "Datenschutzbestimmungen",
+        "asWellAsDie": "sowie die",
+        "returnInstructions": "Ruckgabenhinweise",
+        "acknowledgement": "zur Kenntnis."
+  },
+    "footer": {
+        "impressum": "Impressum",
+        "dataProtection": "Datenschutz",
+        "rightOfWithdrawal": "Widerrufsbelehrung",
+        "faq": "FAQ",
+        "contact": "Kontakt",
+        "poweredBy": "Powered by"
     }
-
   }
   

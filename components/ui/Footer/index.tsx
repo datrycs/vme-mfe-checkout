@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next"
 import styled from "styled-components"
 import tw from "twin.macro"
 import { links } from "utils/links"
@@ -5,18 +6,21 @@ import { links } from "utils/links"
 import { Logo } from "./cl"
 
 export const Footer: React.FC = () => {
+  const { t } = useTranslation()
+
   return (
     <Wrapper>
       <Links>
-        <a href={links.impressum}>Impressum</a>
-        <a href={links.agb}>AGB</a>
-        <a href={links.datenschutz}>Datenschutz</a>
-        <a href={links.widerrufsbelehrung}>Widerrufsbelehrung</a>
-        <a href={links.faq}>FAQ</a>
-        <a href={links.kontakt}>Kontakt</a>
+        <a href={links.impressum}>{t("footer.impressum")}</a>
+        <a href={links.agb}>{t("termsContent.generalTerms")}</a>{" "}
+        <a href={links.datenschutz}>{t("footer.dataProtection")}</a>
+        <a href={links.widerrufsbelehrung}>{t("footer.rightOfWithdrawal")}</a>
+        <a href={links.faq}>{t("footer.faq")}</a>
+        <a href={links.kontakt}>{t("footer.contact")}</a>
       </Links>
       <LogoWrapper>
-        Powered by <Logo width="135" height="22" className="pl-2" />
+        {t("footer.poweredBy")}{" "}
+        <Logo width="135" height="22" className="pl-2" />
       </LogoWrapper>
     </Wrapper>
   )
@@ -27,7 +31,6 @@ const Wrapper = styled.div`
 
   &::before {
     ${tw`hidden md:(block top-0 absolute left-0 w-full z-10 h-2 shadow-top)`}
-
     content: "";
   }
 `
@@ -38,3 +41,5 @@ const LogoWrapper = styled.div`
 const Links = styled.div`
   ${tw`flex gap-2 mb-5 text-black`}
 `
+
+export default Footer
