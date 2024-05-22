@@ -12,14 +12,14 @@ export const Footer: React.FC = () => {
     <Wrapper>
       <Links>
         <a href={links.impressum}>{t("footer.impressum")}</a>
-        <a href={links.agb}>{t("termsContent.generalTerms")}</a>{" "}
+        <a href={links.agb}>{t("termsContent.generalTerms")}</a>
         <a href={links.datenschutz}>{t("footer.dataProtection")}</a>
         <a href={links.widerrufsbelehrung}>{t("footer.rightOfWithdrawal")}</a>
         <a href={links.faq}>{t("footer.faq")}</a>
         <a href={links.kontakt}>{t("footer.contact")}</a>
       </Links>
       <LogoWrapper>
-        {t("footer.poweredBy")}{" "}
+        {t("footer.poweredBy")}
         <Logo width="135" height="22" className="pl-2" />
       </LogoWrapper>
     </Wrapper>
