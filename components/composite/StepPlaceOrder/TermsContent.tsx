@@ -48,7 +48,7 @@ const TermsContent = () => {
       <span>
         {" "}
         <a
-          href={links.kontakt}
+          href={links.faq}
           target="_blank"
           style={{ textDecoration: "underline" }}
           rel="noreferrer"
