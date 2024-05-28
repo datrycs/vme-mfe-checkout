@@ -11,12 +11,28 @@ export const Footer: React.FC = () => {
   return (
     <Wrapper>
       <Links>
-        <a href={links.impressum}>{t("footer.impressum")}</a>
-        <a href={links.agb}>{t("termsContent.generalTerms")}</a>
-        <a href={links.datenschutz}>{t("footer.dataProtection")}</a>
-        <a href={links.widerrufsbelehrung}>{t("footer.rightOfWithdrawal")}</a>
-        <a href={links.faq}>{t("footer.faq")}</a>
-        <a href={links.kontakt}>{t("footer.contact")}</a>
+        <a href={links.impressum} target="_blank" rel="noopener noreferrer">
+          {t("footer.impressum")}
+        </a>
+        <a href={links.agb} target="_blank" rel="noopener noreferrer">
+          {t("termsContent.generalTerms")}
+        </a>
+        <a href={links.datenschutz} target="_blank" rel="noopener noreferrer">
+          {t("footer.dataProtection")}
+        </a>
+        <a
+          href={links.widerrufsbelehrung}
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          {t("footer.rightOfWithdrawal")}
+        </a>
+        <a href={links.faq} target="_blank" rel="noopener noreferrer">
+          {t("footer.faq")}
+        </a>
+        <a href={links.kontakt} target="_blank" rel="noopener noreferrer">
+          {t("footer.contact")}
+        </a>
       </Links>
       <LogoWrapper>
         {t("footer.poweredBy")}
