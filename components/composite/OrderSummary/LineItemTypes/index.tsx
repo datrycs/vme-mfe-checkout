@@ -1,4 +1,8 @@
-import { LineItemField } from "@commercelayer/react-components"
+import {
+  AvailabilityContainer,
+  AvailabilityTemplate,
+  LineItemField,
+} from "@commercelayer/react-components"
 import {
   LineItem,
   TLineItem,
@@ -60,6 +64,23 @@ export const LineItemTypes: React.FC<Props> = ({ type }) => {
           <StyledLineItemOptions showAll showName={true} className="options">
             <LineItemOption />
           </StyledLineItemOptions>
+          <div className="flex text-xs gap-1">
+            <div className="font-semibold text-gray-400">
+              {t("item.availability")}:
+            </div>
+            <AvailabilityContainer>
+              <AvailabilityTemplate timeFormat={"days"}>
+                {(childrenProps) => {
+                  return (
+                    <span>
+                      {childrenProps.min?.days}-{childrenProps.max?.days}{" "}
+                      {t("item.days")}
+                    </span>
+                  )
+                }}
+              </AvailabilityTemplate>
+            </AvailabilityContainer>
+          </div>
           <FlexContainer className="flex-col justify-between mt-2 lg:flex-row">
             <LineItemQty>
               <LineItemQuantity>
