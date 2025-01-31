@@ -12,10 +12,10 @@ import cronParser from "cron-parser"
 import cronstrue from "cronstrue"
 import { useTranslation } from "next-i18next"
 import React from "react"
+
 import "cronstrue/locales/en"
 import "cronstrue/locales/it"
 import "cronstrue/locales/de"
-
 import { RepeatIcon } from "../RepeatIcon"
 
 import { FlexContainer } from "components/ui/FlexContainer"
@@ -29,6 +29,16 @@ import {
   StyledLineItemSkuCode,
   StyledLineItemOptions,
 } from "./styled"
+
+interface DeliveryLeadTime {
+  minHours: number
+  maxHours: number
+}
+
+interface DeliveryLeadTime {
+  minHours: number
+  maxHours: number
+}
 
 interface Props {
   type: TLineItem
@@ -62,13 +72,22 @@ export const LineItemTypes: React.FC<Props> = ({ type }) => {
           </StyledLineItemOptions>
 
           <LineItemField attribute="metadata">
+            {/* @ts-expect-error typing on attribute */}
             {({ attributeValue }) => {
-              if (!attributeValue) return null
+              if (!attributeValue || typeof attributeValue !== "object")
+                return null
 
-              const metadata = attributeValue as Record<string, any>
-              const deliveryTime = metadata.deliveryLeadTime
-                ? JSON.parse(metadata.deliveryLeadTime)
-                : null
+              const metadata = attributeValue as Record<string, unknown>
+              const deliveryLeadTimeStr = metadata.deliveryLeadTime
+              if (
+                !deliveryLeadTimeStr ||
+                typeof deliveryLeadTimeStr !== "string"
+              )
+                return null
+
+              const deliveryTime = JSON.parse(
+                deliveryLeadTimeStr
+              ) as DeliveryLeadTime
 
               if (!deliveryTime) return null
 
