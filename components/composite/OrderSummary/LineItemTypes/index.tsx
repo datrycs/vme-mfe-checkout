@@ -60,6 +60,41 @@ export const LineItemTypes: React.FC<Props> = ({ type }) => {
           <StyledLineItemOptions showAll showName={true} className="options">
             <LineItemOption />
           </StyledLineItemOptions>
+
+          <LineItemField attribute="metadata">
+            {({ attributeValue }) => {
+              if (!attributeValue) return null
+
+              const metadata = attributeValue as Record<string, any>
+              const deliveryTime = metadata.deliveryLeadTime
+                ? JSON.parse(metadata.deliveryLeadTime)
+                : null
+
+              if (!deliveryTime) return null
+
+              const minDays = Math.ceil(deliveryTime.minHours / 24)
+              const maxDays = Math.ceil(deliveryTime.maxHours / 24)
+
+              return (
+                <div className="flex text-xs gap-1">
+                  <div className="font-semibold text-gray-400">
+                    {t("item.availability")}:
+                  </div>
+                  <span>
+                    {maxDays >= 10
+                      ? minDays === maxDays
+                        ? `${Math.round(minDays / 7)} ${t("item.weeks")}`
+                        : `${Math.round(minDays / 7)}-${Math.round(
+                            maxDays / 7
+                          )} ${t("item.weeks")}`
+                      : minDays === maxDays
+                      ? `${minDays} ${t("item.days")}`
+                      : `${minDays}-${maxDays} ${t("item.days")}`}
+                  </span>
+                </div>
+              )
+            }}
+          </LineItemField>
           <FlexContainer className="flex-col justify-between mt-2 lg:flex-row">
             <LineItemQty>
               <LineItemQuantity>

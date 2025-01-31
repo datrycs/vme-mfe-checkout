@@ -174,5 +174,10 @@
       "faq": "FAQ",
       "contact": "Contact",
       "poweredBy": "Powered by"
+    },
+    "item": {
+        "availability": "Availability",
+        "days": "workday(s)",
+        "weeks": "week(s)"
     }
 }
