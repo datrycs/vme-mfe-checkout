@@ -35,11 +35,6 @@ interface DeliveryLeadTime {
   maxHours: number
 }
 
-interface DeliveryLeadTime {
-  minHours: number
-  maxHours: number
-}
-
 interface Props {
   type: TLineItem
 }
