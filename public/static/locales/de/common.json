@@ -172,6 +172,11 @@
         "faq": "FAQ",
         "contact": "Kontakt",
         "poweredBy": "Powered by"
+    },
+    "item": {
+        "availability": "Lieferzeit",
+        "days": "Werktag(e)",
+        "weeks": "Woche(n)"
     }
   }
   

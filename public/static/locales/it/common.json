@@ -153,6 +153,10 @@
         "customer_title": "Cliente",
         "email": "E-mail:",
         "free_payment": "Questo ordine non richiede un pagamento"
+    },
+    "item": {
+        "availability": "Availability",
+        "days": "workday(s)",
+        "weeks": "week(s)"
     }
-
 }

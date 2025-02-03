@@ -12,10 +12,10 @@ import cronParser from "cron-parser"
 import cronstrue from "cronstrue"
 import { useTranslation } from "next-i18next"
 import React from "react"
+
 import "cronstrue/locales/en"
 import "cronstrue/locales/it"
 import "cronstrue/locales/de"
-
 import { RepeatIcon } from "../RepeatIcon"
 
 import { FlexContainer } from "components/ui/FlexContainer"
@@ -29,6 +29,11 @@ import {
   StyledLineItemSkuCode,
   StyledLineItemOptions,
 } from "./styled"
+
+interface DeliveryLeadTime {
+  minHours: number
+  maxHours: number
+}
 
 interface Props {
   type: TLineItem
@@ -60,6 +65,50 @@ export const LineItemTypes: React.FC<Props> = ({ type }) => {
           <StyledLineItemOptions showAll showName={true} className="options">
             <LineItemOption />
           </StyledLineItemOptions>
+
+          <LineItemField attribute="metadata">
+            {/* @ts-expect-error typing on attribute */}
+            {({ attributeValue }) => {
+              if (!attributeValue || typeof attributeValue !== "object")
+                return null
+
+              const metadata = attributeValue as Record<string, unknown>
+              const deliveryLeadTimeStr = metadata.deliveryLeadTime
+              if (
+                !deliveryLeadTimeStr ||
+                typeof deliveryLeadTimeStr !== "string"
+              )
+                return null
+
+              const deliveryTime = JSON.parse(
+                deliveryLeadTimeStr
+              ) as DeliveryLeadTime
+
+              if (!deliveryTime) return null
+
+              const minDays = Math.ceil(deliveryTime.minHours / 24)
+              const maxDays = Math.ceil(deliveryTime.maxHours / 24)
+
+              return (
+                <div className="flex text-xs gap-1">
+                  <div className="font-semibold text-gray-400">
+                    {t("item.availability")}:
+                  </div>
+                  <span>
+                    {maxDays >= 10
+                      ? minDays === maxDays
+                        ? `${Math.round(minDays / 7)} ${t("item.weeks")}`
+                        : `${Math.round(minDays / 7)}-${Math.round(
+                            maxDays / 7
+                          )} ${t("item.weeks")}`
+                      : minDays === maxDays
+                      ? `${minDays} ${t("item.days")}`
+                      : `${minDays}-${maxDays} ${t("item.days")}`}
+                  </span>
+                </div>
+              )
+            }}
+          </LineItemField>
           <FlexContainer className="flex-col justify-between mt-2 lg:flex-row">
             <LineItemQty>
               <LineItemQuantity>
