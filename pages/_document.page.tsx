@@ -26,6 +26,40 @@ class AppDocument extends Document {
     /> */}
           <link rel="icon" href="data:;base64,iVBORw0KGgo=" />
 
+
+          {process.env.NEXT_PUBLIC_COOKIEBOT_ID && (
+            <>
+              <script
+                data-cookieconsent="ignore"
+                dangerouslySetInnerHTML={{
+                  __html: `
+                    window.dataLayer = window.dataLayer || [];
+                    function gtag() {
+                      dataLayer.push(arguments)
+                    }
+                    gtag("consent", "default", {
+                      ad_storage: "denied",
+                      analytics_storage: "denied",
+                      functionality_storage: "denied",
+                      personalization_storage: "denied",
+                      security_storage: "granted",
+                      wait_for_update: 500
+                    });
+                    gtag("set", "ads_data_redaction", true);
+                    gtag("set", "url_passthrough", true);
+                  `,
+                }}
+              />
+              <script
+                id="Cookiebot"
+                src="https://consent.cookiebot.com/uc.js"
+                data-cbid={process.env.NEXT_PUBLIC_COOKIEBOT_ID}
+                type="text/javascript"
+                async
+              />
+            </>
+          )}
+
           {process.env[
             `NEXT_PUBLIC_NEWRELIC_LOADER_CONFIG_${process.env.NEXT_PUBLIC_STAGE}`
           ] !== null && (
