@@ -52,6 +52,8 @@ export const GTMProvider: React.FC<GTMProviderProps> = ({
   const { order } = ctx
 
   useEffect(() => {
+    let handleConsent: (() => void) | null = null
+
     if (isFirstLoading.current && gtmId != null && order != null) {
       isFirstLoading.current = false
 
@@ -74,13 +76,15 @@ export const GTMProvider: React.FC<GTMProviderProps> = ({
           // }
         } else {
           // Wait for consent before firing the event
-          const handleConsent = () => {
+          handleConsent = () => {
             if (window.Cookiebot?.consent?.statistics) {
               // if (!skipBeginCheckout) {
               fireBeginCheckout(order)
               // }
               // Remove listener after firing
-              window.removeEventListener("CookiebotOnAccept", handleConsent)
+              if (handleConsent) {
+                window.removeEventListener("CookiebotOnAccept", handleConsent)
+              }
             }
           }
           window.addEventListener("CookiebotOnAccept", handleConsent, false)
@@ -90,6 +94,13 @@ export const GTMProvider: React.FC<GTMProviderProps> = ({
         // if (!skipBeginCheckout) {
         fireBeginCheckout(order)
         // }
+      }
+    }
+
+    // Cleanup function to remove event listener on unmount
+    return () => {
+      if (handleConsent) {
+        window.removeEventListener("CookiebotOnAccept", handleConsent)
       }
     }
   }, [order])
