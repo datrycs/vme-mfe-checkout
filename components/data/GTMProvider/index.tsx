@@ -8,19 +8,6 @@ import { LINE_ITEMS_SHOPPABLE } from "components/utils/constants"
 
 import { DataLayerItemProps, DataLayerProps } from "./typings"
 
-declare global {
-  interface Window {
-    Cookiebot?: {
-      consent?: {
-        statistics?: boolean
-        marketing?: boolean
-        preferences?: boolean
-        necessary?: boolean
-      }
-    }
-  }
-}
-
 interface GTMProviderData {
   fireAddShippingInfo: (order: Order) => void
   fireAddPaymentInfo: () => void
@@ -52,56 +39,10 @@ export const GTMProvider: React.FC<GTMProviderProps> = ({
   const { order } = ctx
 
   useEffect(() => {
-    let handleConsent: (() => void) | null = null
-
     if (isFirstLoading.current && gtmId != null && order != null) {
       isFirstLoading.current = false
-
-      // Always initialize GTM - Google's Advanced Consent Mode handles consent internally
       TagManager.initialize({ gtmId })
-
-      // For begin_checkout event, check consent if Cookiebot is present
-      if (
-        typeof window !== "undefined" &&
-        window.Cookiebot &&
-        process.env.NEXT_PUBLIC_COOKIEBOT_ID
-      ) {
-        if (window.Cookiebot.consent?.statistics) {
-          // User has already consented to statistics/analytics
-          // TODO: `skipBeginCheckout` should probably be used. It had been added to Roomio checkout but not for Trendhopper.
-          // See https://github.com/datrycs/roomio-mfe-checkout/commit/5b4c3c4d93f59f7f875711f4d71f9a09b986fb53
-          //
-          // if (!skipBeginCheckout) {
-          fireBeginCheckout(order)
-          // }
-        } else {
-          // Wait for consent before firing the event
-          handleConsent = () => {
-            if (window.Cookiebot?.consent?.statistics) {
-              // if (!skipBeginCheckout) {
-              fireBeginCheckout(order)
-              // }
-              // Remove listener after firing
-              if (handleConsent) {
-                window.removeEventListener("CookiebotOnAccept", handleConsent)
-              }
-            }
-          }
-          window.addEventListener("CookiebotOnAccept", handleConsent, false)
-        }
-      } else {
-        // No Cookiebot - fire event immediately
-        // if (!skipBeginCheckout) {
-        fireBeginCheckout(order)
-        // }
-      }
-    }
-
-    // Cleanup function to remove event listener on unmount
-    return () => {
-      if (handleConsent) {
-        window.removeEventListener("CookiebotOnAccept", handleConsent)
-      }
+      fireBeginCheckout(order)
     }
   }, [order])
 
